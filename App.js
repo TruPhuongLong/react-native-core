@@ -3,53 +3,71 @@ import {
   StyleSheet,
   Text,
   View,
-  DrawerLayoutAndroid
+  DrawerLayoutAndroid,
+  Alert,
+  Picker
 } from 'react-native';
 
 import ActivityIndicatorDemo from './components/activityIndicator'
 import ButtonDemo from './components/button'
 import DrawerLayoutAndroidDemo from './components/drawerLayoutAndroid'
 import FlatListDemo from './components/flatList'
+import ImageBackgroundDemo from './components/imageBackground'
+import KeyboardAvoidingViewDemo from './components/keyboardAvoidingView'
+import ModalDemo from './components/modal'
 
-export default class App extends React.Component {
+import styles from './styles/bg'
 
-  //DrawerLayoutAndroid
-  // render() {
-  //   const navigationView = (
-  //     <View style={{ flex: 1, backgroundColor: '#fff' }}>
-  //       <Text style={{ margin: 10, fontSize: 15, textAlign: 'left' }}>I'm in the Drawer!</Text>
-  //     </View>
-  //   );
-  //   return (
-  //     <DrawerLayoutAndroid
-  //       drawerWidth={300}
-  //       drawerPosition={DrawerLayoutAndroid.positions.Left}
-  //       renderNavigationView={() => navigationView}>
-  //       <View style={{ flex: 1, alignItems: 'center' }}>
-  //         <Text style={{ margin: 10, fontSize: 15, textAlign: 'right' }}>Hello</Text>
-  //         <Text style={{ margin: 10, fontSize: 15, textAlign: 'right' }}>World!</Text>
-  //       </View>
-  //     </DrawerLayoutAndroid>
-  //   );
-  // }
 
 
 
-  //normal:
-  render(){
-    return(
-      <View>
-        <FlatListDemo data={[{key: 0, id: 0}, {key: 1, id: 1}]}/>
+export default class App extends React.Component {
+  render() {
+    return (
+      <View >
+        <PickerDemo />
       </View>
     )
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+
+
+const TextDemo = () => {
+  return (
+    <View>
+      <Text style={{ color: 'red', fontSize: 50 }}>
+        <Text>my name is Long. </Text>
+        <Text>what is your name</Text>
+        <Text style={{ color: 'blue' }}>
+          <Text>my name is Long</Text>
+          <Text>what is your name</Text>
+        </Text>
+      </Text>
+      <Text
+        onPress={() => console.log('hi')}
+        onLongPress={() => Alert.alert('longPress')}
+      >guest this is break new line</Text>
+      <Text>it new too</Text>
+    </View>
+  )
+}
+
+
+const PickerDemo = () => {
+  return (
+    <Picker style={{
+      marginTop: 20,
+      height: 200,
+      width: '50%',
+      backgroundColor: 'orange'
+    }}
+      onValueChange={(inValue, inIndex) => console.log(inValue, inIndex)}
+    >
+      <Picker.Item label="James Kirk" value="james_kirk" />
+      <Picker.Item label="John Sheridan" value="john_sheridan" />
+      <Picker.Item label="Han Solo" value="han_solo" />
+      <Picker.Item label="Ahab" value="ahab" />
+    </Picker>
+  )
+}
