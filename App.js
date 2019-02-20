@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import {
   StyleSheet,
   Text,
@@ -19,7 +19,15 @@ import {
   ViewPagerAndroid,
   AppState,
   BackHandler,
-  Clipboard
+  Clipboard,
+  Dimensions,
+  InteractionManager,
+  Keyboard,
+  TextInput,
+  NetInfo,
+  PixelRatio,
+  Image,
+  ToastAndroid
 } from 'react-native';
 
 import ActivityIndicatorDemo from './components/activityIndicator'
@@ -33,13 +41,13 @@ import ModalDemo from './components/modal'
 import styles from './styles/bg'
 
 
-//
+//fff
 
 export default class App extends React.Component {
   render() {
     return (
       <View style={{ paddingTop: 20 }}>
-        <ClipboardDemo />
+        <ToastAndroidDemo />
       </View>
     )
   }
@@ -334,7 +342,7 @@ class AppStateExample extends Component {
     ) {
       console.log('App has come to the foreground!');
     }
-    this.setState({appState: nextAppState});
+    this.setState({ appState: nextAppState });
   };
 
   render() {
@@ -344,7 +352,7 @@ class AppStateExample extends Component {
 
 
 
-class BackHandlerDemo extends Component{
+class BackHandlerDemo extends Component {
   componentDidMount() {
     BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
   }
@@ -358,8 +366,8 @@ class BackHandlerDemo extends Component{
     this.goBack(); // works best when the goBack is async, 
     return true;
   }
-  render(){
-    return(
+  render() {
+    return (
       <View>
         <Text>BackHandlerDemo</Text>
       </View>
@@ -370,12 +378,182 @@ class BackHandlerDemo extends Component{
 
 
 const ClipboardDemo = () => {
-  return(
+  return (
     <View>
       <Text onPress={() => {
         console.log('da copy')
         Clipboard.setString('https://google.com')
       }}>https://google.com</Text>
     </View>
+  )
+}
+
+
+
+class DimensionsDemo extends Component {
+  render() {
+    const { height, width } = Dimensions.get('window');
+
+    return (
+      <View>
+        <Text>window width: {width}, and height: {height}</Text>
+      </View>
+    )
+  }
+
+}
+
+
+
+
+const GeolocationDemo = () => {
+  //
+  // for(let p in global){
+  //   console.log(p)
+  // }
+  navigator.geolocation.getCurrentPosition(
+    (position) => { console.log("getCurrentPosition()", position); },
+    (error) => { console.log("getCurrentPosition() error", error); },
+    { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+  );
+  return (
+    <View>
+      <Text>GeolocationDemo </Text>
+    </View>
+  )
+}
+
+
+
+const InteractionManagerDemo = () => {
+  return (
+    <View>
+      <Text>InteractionManagerDemo</Text>
+    </View>
+  )
+}
+
+
+
+class KeyboardDemo extends Component {
+  componentDidMount() {
+    this.keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      this._keyboardDidShow,
+    );
+    this.keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      this._keyboardDidHide,
+    );
+  }
+
+  componentWillUnmount() {
+    this.keyboardDidShowListener.remove();
+    this.keyboardDidHideListener.remove();
+  }
+
+  _keyboardDidShow() {
+    alert('Keyboard Shown');
+  }
+
+  _keyboardDidHide() {
+    alert('Keyboard Hidden');
+  }
+
+  render() {
+    return <TextInput onSubmitEditing={Keyboard.dismiss} />;
+  }
+}
+
+
+
+
+const NetInfoDemo = () => {
+  NetInfo.getConnectionInfo().then((connectionInfo) => {
+    console.log(
+      'Initial, type: ' +
+      connectionInfo.type +
+      ', effectiveType: ' +
+      connectionInfo.effectiveType,
+    );
+  });
+  function handleFirstConnectivityChange(connectionInfo) {
+    console.log(
+      'First change, type: ' +
+      connectionInfo.type +
+      ', effectiveType: ' +
+      connectionInfo.effectiveType,
+    );
+    NetInfo.removeEventListener(
+      'connectionChange',
+      handleFirstConnectivityChange,
+    );
+  }
+  NetInfo.addEventListener('connectionChange', handleFirstConnectivityChange);
+
+  NetInfo.isConnectionExpensive()
+    .then(isConnectionExpensive => {
+      console.log('Connection is ' + (isConnectionExpensive ? 'Expensive' : 'Not Expensive'));
+    })
+    .catch(error => {
+      console.error(error);
+    });
+
+
+  NetInfo.isConnected.fetch().then(isConnected => {
+    console.log('First, is ' + (isConnected ? 'online' : 'offline'));
+  });
+  function handleFirstConnectivityChange(isConnected) {
+    console.log('Then, is ' + (isConnected ? 'online' : 'offline'));
+    NetInfo.isConnected.removeEventListener(
+      'connectionChange',
+      handleFirstConnectivityChange
+    );
+  }
+  NetInfo.isConnected.addEventListener(
+    'connectionChange',
+    handleFirstConnectivityChange
+  );
+
+  return (
+    <View>
+      <Text>NetInfoDemo</Text>
+    </View>
+  )
+}
+
+
+
+const PixelRatioDemo = () => {
+  var image = getImage({
+    width: PixelRatio.getPixelSizeForLayoutSize(200),
+    height: PixelRatio.getPixelSizeForLayoutSize(100),
+  });
+  return (
+    <View>
+      <Text>PixelRatioDemo</Text>
+      <Image source={image} style={{ width: 200, height: 100 }} />;
+
+    </View>
+  )
+}
+
+
+const ToastAndroidDemo = () => {
+  return (
+    <Button title="Show Toast Message (Android Only)"
+      onPress={async () => {
+        ToastAndroid.show("I am a short message", ToastAndroid.SHORT);
+        ToastAndroid.showWithGravity(
+          "I am a message with gravity, centered",
+          ToastAndroid.SHORT, ToastAndroid.CENTER
+        );
+        ToastAndroid.showWithGravityAndOffset(
+          "I am a message with gravity, offset from the bottom",
+          ToastAndroid.LONG, ToastAndroid.TOP,
+          -75, Dimensions.get("window").height / 2
+        );
+      }}
+    />
   )
 }
